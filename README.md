@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IT Budget vs Actual Dashboard — local Docker build
 
-## Getting Started
+Port of the original Lovable app ("Entity Insights Hub") to Next.js, running fully
+locally via Docker: Next.js app + Postgres (Neon-compatible — same connection
+string shape, so pointing `DATABASE_URL` at a real Neon project later is a
+drop-in swap, no code changes needed).
 
-First, run the development server:
+## What's running
+
+- **app** — Next.js 16 (App Router), port `3010` on the host
+- **db** — Postgres 16, port `5433` on the host (5432 was already taken locally by another project)
+
+All budget data lives in Postgres now (`budget_rows` table) instead of the
+original's bundled JSON + per-browser localStorage — "Upload XLSX" and
+"Refresh from Database" are real, shared operations now. Login is required for
+every page and API route except `/login` itself.
+
+## First-time setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. Copy env template and fill in a JWT secret (Groq key optional — only
+#    needed for the AI Copilot chat / insights features)
+cp .env.example .env
+# generate a secret:
+openssl rand -base64 32   # paste into JWT_SECRET in .env
+
+# 2. Start Postgres
+docker compose up -d db
+
+# 3. Push the schema (one-time, or after editing db/schema.ts)
+npm install
+npx drizzle-kit push
+
+# 4. Load the seed dataset (~4,900 rows, same data the original app ships with)
+set -a; source .env; set +a
+npx tsx scripts/seed.ts
+
+# 5. Create your login account(s) — no self-signup, admin creates accounts manually
+npx tsx scripts/create-user.ts you@company.com "YourPassword123!"
+
+# 6. Build and start the full stack
+docker compose up -d --build
+
+# App is now at http://localhost:3010
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Day-to-day
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+docker compose up -d      # start
+docker compose down       # stop (data persists in the db_data volume)
+docker compose logs -f app
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To add more users later:
 
-## Learn More
+```bash
+set -a; source .env; set +a
+npx tsx scripts/create-user.ts someone@company.com "TheirPassword"
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Local dev without Docker (optional)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker compose up -d db     # just the database
+npm run dev                 # Next.js on :3000, reads .env.local
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Known note
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The bundled seed dataset (from the zip you provided) has 4,901 rows; the
+currently-live `it-budget-vs-actual.lovable.app` shows 4,703 in its header —
+that site has apparently been refreshed since the zip was exported. This port
+faithfully replicates the zip's data; swap in a newer export via "Upload XLSX"
+if you want the dashboard to match the live numbers exactly.
