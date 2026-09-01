@@ -68,7 +68,7 @@ export function StatCard({ label, actual, budget, remaining, budgetAlloc, remain
             />
           </div>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Remaining Budget</span>
+            <span>Remaining vs Budget</span>
             <span className={cn("font-mono font-medium", over ? "text-destructive" : "text-foreground")}>
               {fmtAmt(remaining)} {unit}
             </span>
@@ -92,7 +92,7 @@ export function StatCard({ label, actual, budget, remaining, budgetAlloc, remain
                 />
               </div>
               <div className="flex justify-between text-[11px] text-muted-foreground">
-                  <span>Alloc {fmtAmt(budgetAlloc ?? 0)} · Remaining Budget</span>
+                  <span>Alloc {fmtAmt(budgetAlloc ?? 0)} · Remaining</span>
                 <span className={cn("font-mono", overAlloc ? "text-destructive" : "text-foreground")}>
                   {fmtAmt(remainingAlloc ?? 0)} {unit}
                 </span>

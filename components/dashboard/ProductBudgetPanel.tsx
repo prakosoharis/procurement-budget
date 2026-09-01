@@ -195,7 +195,7 @@ export function ProductBudgetPanel({ groups, unit, periodLabel }: Props) {
         <div className="px-5 py-3 border-b border-border/50 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <h3 className="text-base font-semibold tracking-tight">AI Insights</h3>
-          <span className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">Groq AI</span>
+          <span className="ml-auto text-[10px] uppercase tracking-wider text-muted-foreground">Groq · Llama 3.3 70B</span>
         </div>
         <div className="p-4 flex-1 flex flex-col gap-3 min-h-[320px]">
           <Button

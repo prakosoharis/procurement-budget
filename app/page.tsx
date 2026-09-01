@@ -20,7 +20,6 @@ import { FullYearOutlookPanel } from "@/components/dashboard/FullYearOutlookPane
 import { ThemeSwitcher } from "@/components/dashboard/ThemeSwitcher";
 import { ExportButtons } from "@/components/dashboard/ExportButtons";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Filters, applyFilters, applyFiltersForYear, byEntity, byFundCenter, monthlyTrend, totals, valueKey, unitLabel,
   effectiveDisplay, DEFAULT_FX_USD_TO_IDR, departmentBreakdown, entityGroupYearComparison,
@@ -169,65 +168,53 @@ export default function Page() {
             <StatCard label="Total Capex + Opex" actual={t.total.actual} budget={t.total.budget} remaining={t.total.remaining} budgetAlloc={t.total.budgetAlloc} remainingAlloc={t.total.remainingAlloc} unit={unit} accent="info" />
           </section>
 
-          <Tabs defaultValue="overview" className="mt-6">
-            <div className="overflow-x-auto pb-1">
-              <TabsList className="h-11 min-w-max border border-border/60 bg-card/70 p-1">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="analysis">Budget Analysis</TabsTrigger>
-                <TabsTrigger value="spend">Spend Details</TabsTrigger>
-                <TabsTrigger value="ai">Outlook &amp; AI</TabsTrigger>
-              </TabsList>
-            </div>
+          <div className="mt-6 space-y-4">
+            <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+              <CumulativeBudgetChart title={`Cumulative Capex ${filters.year}`} points={cumCurrent.capex.points} budgetCeiling={cumCurrent.capex.budgetCeiling} budgetAllocCeiling={cumCurrent.capex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(25 95% 55%)" />
+              <CumulativeBudgetChart title={`Cumulative Opex ${filters.year}`} points={cumCurrent.opex.points} budgetCeiling={cumCurrent.opex.budgetCeiling} budgetAllocCeiling={cumCurrent.opex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(25 95% 55%)" />
+              <CumulativeBudgetChart title={`Cumulative Capex + Opex ${filters.year}`} points={cumCurrent.total.points} budgetCeiling={cumCurrent.total.budgetCeiling} budgetAllocCeiling={cumCurrent.total.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(25 95% 55%)" />
+            </section>
+            <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+              <CumulativeBudgetChart title={`Cumulative Capex ${filters.year - 1}`} points={cumLast.capex.points} budgetCeiling={cumLast.capex.budgetCeiling} budgetAllocCeiling={cumLast.capex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(210 60% 55%)" />
+              <CumulativeBudgetChart title={`Cumulative Opex ${filters.year - 1}`} points={cumLast.opex.points} budgetCeiling={cumLast.opex.budgetCeiling} budgetAllocCeiling={cumLast.opex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(210 60% 55%)" />
+              <CumulativeBudgetChart title={`Cumulative Capex + Opex ${filters.year - 1}`} points={cumLast.total.points} budgetCeiling={cumLast.total.budgetCeiling} budgetAllocCeiling={cumLast.total.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(210 60% 55%)" />
+            </section>
 
-            <TabsContent value="overview" className="mt-4 space-y-4">
-              <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-                <CumulativeBudgetChart title={`Cumulative Capex ${filters.year}`} points={cumCurrent.capex.points} budgetCeiling={cumCurrent.capex.budgetCeiling} budgetAllocCeiling={cumCurrent.capex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(25 95% 55%)" />
-                <CumulativeBudgetChart title={`Cumulative Opex ${filters.year}`} points={cumCurrent.opex.points} budgetCeiling={cumCurrent.opex.budgetCeiling} budgetAllocCeiling={cumCurrent.opex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(25 95% 55%)" />
-                <CumulativeBudgetChart title={`Cumulative Capex + Opex ${filters.year}`} points={cumCurrent.total.points} budgetCeiling={cumCurrent.total.budgetCeiling} budgetAllocCeiling={cumCurrent.total.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(25 95% 55%)" />
-              </section>
-              <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-                <CumulativeBudgetChart title={`Cumulative Capex ${filters.year - 1}`} points={cumLast.capex.points} budgetCeiling={cumLast.capex.budgetCeiling} budgetAllocCeiling={cumLast.capex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(210 60% 55%)" />
-                <CumulativeBudgetChart title={`Cumulative Opex ${filters.year - 1}`} points={cumLast.opex.points} budgetCeiling={cumLast.opex.budgetCeiling} budgetAllocCeiling={cumLast.opex.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(210 60% 55%)" />
-                <CumulativeBudgetChart title={`Cumulative Capex + Opex ${filters.year - 1}`} points={cumLast.total.points} budgetCeiling={cumLast.total.budgetCeiling} budgetAllocCeiling={cumLast.total.budgetAllocCeiling} unit={unit} period={filters.period} color="hsl(210 60% 55%)" />
-              </section>
-              <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2"><MonthlyTrendChart data={trend} unit={unit} period={filters.period} /></div>
-                <EntityBreakdownTable rows={entities} unit={unit} />
-              </section>
-            </TabsContent>
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2"><MonthlyTrendChart data={trend} unit={unit} period={filters.period} /></div>
+              <EntityBreakdownTable rows={entities} unit={unit} />
+            </section>
 
-            <TabsContent value="analysis" className="mt-4 space-y-4">
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <FundCenterChart title="CAPEX by Fund Center" data={capexFC} color="chart-1" unit={unit} />
-                <FundCenterChart title="OPEX by Fund Center" data={opexFC} color="chart-2" unit={unit} />
-              </section>
-              <ProductBudgetPanel groups={productGroups} unit={unit} periodLabel={periodLabel} />
-              <DepartmentBreakdown rows={departments} unit={unit} />
-              <EntityGroupComparison rows={egYoY} unit={unit} />
-            </TabsContent>
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <FundCenterChart title="CAPEX by Fund Center" data={capexFC} color="chart-1" unit={unit} />
+              <FundCenterChart title="OPEX by Fund Center" data={opexFC} color="chart-2" unit={unit} />
+            </section>
 
-            <TabsContent value="spend" className="mt-4 space-y-4">
-              <TopSpendTable rows={topSpend} unit={unit} />
-              <TopItemsTable rows={topItems} unit={unit} />
-              <SpendByCategoryTable rows={categorySpend} unit={unit} sourceRows={filtered} periodKey={key} display={display} fx={filters.fx} />
-            </TabsContent>
+            <ProductBudgetPanel groups={productGroups} unit={unit} periodLabel={periodLabel} />
 
-            <TabsContent value="ai" className="mt-4 space-y-4">
-              <FullYearOutlookPanel rows={filtered} filters={filters} display={display} unit={unit} />
-              <ChatPanel context={{
-                period: periodLabel, view: filters.view, year: filters.year,
-                entityGroup: filters.entityGroup, entity: filters.entity,
-                currencyMode: filters.currencyMode, displayCurrency: display,
-                fxUsdIdr: filters.fx, unit, totals: t,
-                topEntities: entities.slice(0, 8),
-                topCapexFundCenters: capexFC.slice(0, 8),
-                topOpexFundCenters: opexFC.slice(0, 8),
-                topUnderBudgetDepartments: departments.filter(d => d.status === "under" && d.budget > 0).slice(0, 10),
-                topOverBudgetDepartments: departments.filter(d => d.status === "over").slice(0, 10),
-                note: `Mode=${filters.currencyMode}. Amounts in ${unit}. LVA grouped under CAPEX. USD/IDR=${filters.fx} (BI reference) is used to auto-convert native row currencies.`,
-              }} />
-            </TabsContent>
-          </Tabs>
+            <FullYearOutlookPanel rows={filtered} filters={filters} display={display} unit={unit} />
+
+            <TopSpendTable rows={topSpend} unit={unit} />
+            <TopItemsTable rows={topItems} unit={unit} />
+
+            <DepartmentBreakdown rows={departments} unit={unit} />
+            <EntityGroupComparison rows={egYoY} unit={unit} />
+
+            <SpendByCategoryTable rows={categorySpend} unit={unit} sourceRows={filtered} periodKey={key} display={display} fx={filters.fx} />
+
+            <ChatPanel context={{
+              period: periodLabel, view: filters.view, year: filters.year,
+              entityGroup: filters.entityGroup, entity: filters.entity,
+              currencyMode: filters.currencyMode, displayCurrency: display,
+              fxUsdIdr: filters.fx, unit, totals: t,
+              topEntities: entities.slice(0, 8),
+              topCapexFundCenters: capexFC.slice(0, 8),
+              topOpexFundCenters: opexFC.slice(0, 8),
+              topUnderBudgetDepartments: departments.filter(d => d.status === "under" && d.budget > 0).slice(0, 10),
+              topOverBudgetDepartments: departments.filter(d => d.status === "over").slice(0, 10),
+              note: `Mode=${filters.currencyMode}. Amounts in ${unit}. LVA grouped under CAPEX. USD/IDR=${filters.fx} (BI reference) is used to auto-convert native row currencies.`,
+            }} />
+          </div>
         </div>
 
         <footer className="mt-10 pt-6 border-t border-border/50 text-xs text-muted-foreground text-center">

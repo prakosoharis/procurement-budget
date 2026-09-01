@@ -25,7 +25,7 @@ export function ChatPanel({ context }: { context: Record<string, unknown> }) {
   const ctx = context as Ctx;
   const [industry, setIndustry] = useState<IndustryKey>("multifinance");
   const [items, setItems] = useState<ChatItem[]>([
-    { role: "assistant", text: "Hi! Ask me anything — I'll compare your CAPEX/OPEX metrics to the selected industry benchmark using **Groq AI**." },
+    { role: "assistant", text: "Hi! Ask me anything — I'll compare your CAPEX/OPEX metrics to the selected industry benchmark using Groq · Llama 3.3 70B." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,7 +89,7 @@ export function ChatPanel({ context }: { context: Record<string, unknown> }) {
           <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold leading-tight">AI Copilot · Groq</h3>
+          <h3 className="text-sm font-semibold leading-tight">AI Copilot · Groq Llama 3.3 70B</h3>
           <p className="text-[10px] text-muted-foreground truncate">
             {BENCHMARKS[industry].label} · util target {(BENCHMARKS[industry].utilizationTarget * 100).toFixed(0)}% · CAPEX {(BENCHMARKS[industry].capexShareOfIt * 100).toFixed(0)}%
           </p>

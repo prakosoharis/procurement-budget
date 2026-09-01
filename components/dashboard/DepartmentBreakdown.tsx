@@ -109,7 +109,7 @@ export function DepartmentBreakdown({ rows, unit }: { rows: DeptRow[]; unit: str
     <Card className="glass-card p-6">
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div>
-          <h3 className="text-base font-semibold">Budget Reminder by Department</h3>
+          <h3 className="text-base font-semibold">Remaining Budget by Department</h3>
           <p className="text-xs text-muted-foreground">Drill down: Entity Group → Entity → Fund Center · Amount in {unit}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
