@@ -4,6 +4,11 @@ import { dbToRow, rowToDbInsert } from "@/db/mappers";
 import { getSessionFromRequest } from "@/lib/auth";
 import type { Row } from "@/lib/dashboard";
 
+// Give this route headroom on Vercel — a full-dataset upload does a delete +
+// several batched inserts, which can run past the platform's default 10s
+// limit under a cold Neon connection.
+export const maxDuration = 60;
+
 const BATCH_SIZE = 500;
 
 export async function POST(req: NextRequest) {
@@ -26,6 +31,8 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  const saved = await db.select().from(budgetRows);
-  return NextResponse.json({ rows: saved.map(dbToRow), count: saved.length });
+  // The client already sent exactly these rows — echo them back instead of
+  // re-querying the whole table, which used to double the Neon round-trip
+  // and response payload size on every upload.
+  return NextResponse.json({ rows: inserts.map(dbToRow), count: inserts.length });
 }

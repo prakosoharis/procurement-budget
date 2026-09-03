@@ -5,8 +5,10 @@ import type { budgetRows } from "./schema";
 type DbBudgetRow = InferSelectModel<typeof budgetRows>;
 export type DbBudgetRowInsert = InferInsertModel<typeof budgetRows>;
 
-/** DB row (snake_case/camelCase columns) -> frontend Row (exact original Excel-style keys). */
-export function dbToRow(db: DbBudgetRow): Row {
+/** DB row (snake_case/camelCase columns) -> frontend Row (exact original Excel-style keys).
+ *  Accepts either a selected row or the pre-insert shape (both share every
+ *  field this function reads; only `id`, which we never touch, differs). */
+export function dbToRow(db: DbBudgetRow | DbBudgetRowInsert): Row {
   const out: Record<string, unknown> = {
     Year: db.year,
     "Act/Budget": db.actBudget,

@@ -25,7 +25,7 @@ export function EntityBreakdownTable({ rows, unit }: { rows: Row[]; unit: string
               <th className="px-2 py-2 font-medium text-right">Actual</th>
               <th className="px-2 py-2 font-medium text-right">Budget</th>
               {hasAlloc && <th className="px-2 py-2 font-medium text-right text-accent">Alloc</th>}
-              <th className="px-2 py-2 font-medium text-right">Remaining Budget</th>
+              <th className="px-2 py-2 font-medium text-right">Remaining</th>
               <th className="px-2 py-2 font-medium text-right">Usage</th>
               {hasAlloc && <th className="px-2 py-2 font-medium text-right text-accent">Use/Alloc</th>}
             </tr>
