@@ -21,8 +21,11 @@ export function DataActions() {
     try {
       const newRows = await readExcelFile(f);
       if (!newRows.length) { toast.error("No valid rows found in the file."); return; }
-      await uploadRows(newRows);
-      toast.success(`Loaded ${newRows.length.toLocaleString()} rows from ${f.name}`);
+      const years = Array.from(new Set(newRows.map((r) => r.Year))).sort((a, b) => a - b);
+      const total = await uploadRows(newRows);
+      toast.success(
+        `Replaced ${years.join(", ")} with ${newRows.length.toLocaleString()} rows from ${f.name} · ${total.toLocaleString()} rows total`
+      );
     } catch (err) {
       console.error(err);
       toast.error(err instanceof Error ? err.message : "Failed to parse Excel file. Use the same column layout as the Database sheet.");

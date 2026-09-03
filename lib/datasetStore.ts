@@ -7,8 +7,8 @@ export type DatasetCtx = {
   rows: Row[];
   loading: boolean;
   source: "default" | "uploaded";
-  /** Upload already-parsed rows (from an .xlsx file) and persist them to Neon, replacing the dataset for everyone. */
-  uploadRows: (rows: Row[]) => Promise<void>;
+  /** Upload already-parsed rows (from an .xlsx file) and persist them to Neon, replacing the years present in `rows` for everyone. Resolves to the resulting total row count. */
+  uploadRows: (rows: Row[]) => Promise<number>;
   /** Wipe the dataset and reload it from the bundled seed (database.json), persisted server-side. */
   resetRows: () => Promise<void>;
   /** Re-fetch the current dataset from the server. */

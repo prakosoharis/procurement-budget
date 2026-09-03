@@ -54,6 +54,7 @@ export default function Page() {
     const { rows } = await uploadBudgetRows(newRows);
     setRowsState(rows);
     setSource("uploaded");
+    return rows.length;
   }, []);
 
   const resetRows = useCallback(async () => {
